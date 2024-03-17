@@ -2,6 +2,8 @@
 #include <vector>
 #include <windows.h>
 #include <cassert>
+#include <chrono>
+#include <thread>
 
 using namespace std;
 
@@ -25,34 +27,45 @@ public:
 		this->x = x;
 		this->y = y;
 	}
+
+	void Down()
+	{
+		this->y = y + 1;
+	}
 };
 
 struct Block
 {
 public:
-	Point leftP;
-	Point rightP;
+	Point leftPoint;
+	Point rightPoint;
 
 	Block()
 	{
-		leftP = Point();
-		rightP = Point();
+		leftPoint = Point();
+		rightPoint = Point();
 	}
 
 	Block(Point startPoint)
 	{
-		leftP = Point(startPoint.x, startPoint.y);
-		rightP = Point(startPoint.x + 1, startPoint.y);
+		leftPoint = Point(startPoint.x, startPoint.y);
+		rightPoint = Point(startPoint.x + 1, startPoint.y);
 	}
 
 	Point GetLeftPoint()
 	{
-		return this->leftP;
+		return this->leftPoint;
 	}
 
 	Point GetRightPoint()
 	{
-		return this->rightP;
+		return this->rightPoint;
+	}
+
+	void Down()
+	{
+		leftPoint.Down();
+		rightPoint.Down();
 	}
 };
 
@@ -77,27 +90,33 @@ protected:
 
 public:
 	virtual const std::vector<Block>& GetBlocks() const = 0;
+	virtual void Down()
+	{
+		for (auto& block : blocks)
+		{
+			block.Down();
+		}
+	}
 };
 
 class IMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	IMino(Point startPoint) : isFix(false), blocks(4)
+	IMino(Point startPoint)
 	{
 		minoType = EMinoType::IMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 0, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 4, startPoint.y + 0);
 		Point p4 = Point(startPoint.x + 6, startPoint.y + 0);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -108,23 +127,22 @@ public:
 
 class OMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	OMino(Point startPoint) : isFix(false), blocks(4)
+	OMino(Point startPoint)
 	{
 		minoType = EMinoType::OMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 0, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 0, startPoint.y + 1);
 		Point p4 = Point(startPoint.x + 2, startPoint.y + 1);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -135,23 +153,22 @@ public:
 
 class TMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	TMino(Point startPoint) : isFix(false), blocks(4)
+	TMino(Point startPoint)
 	{
 		minoType = EMinoType::TMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 0, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 4, startPoint.y + 0);
 		Point p4 = Point(startPoint.x + 2, startPoint.y + 1);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -162,23 +179,22 @@ public:
 
 class JMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	JMino(Point startPoint) : isFix(false), blocks(4)
+	JMino(Point startPoint)
 	{
 		minoType = EMinoType::JMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 0, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 4, startPoint.y + 0);
 		Point p4 = Point(startPoint.x + 4, startPoint.y + 1);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -189,23 +205,22 @@ public:
 
 class LMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	LMino(Point startPoint) : isFix(false), blocks(4)
+	LMino(Point startPoint)
 	{
 		minoType = EMinoType::LMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 0, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 4, startPoint.y + 0);
 		Point p4 = Point(startPoint.x + 0, startPoint.y + 1);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -216,23 +231,22 @@ public:
 
 class SMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	SMino(Point startPoint) : isFix(false), blocks(4)
+	SMino(Point startPoint)
 	{
 		minoType = EMinoType::SMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 4, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 0, startPoint.y + 1);
 		Point p4 = Point(startPoint.x + 2, startPoint.y + 1);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -243,23 +257,22 @@ public:
 
 class ZMino : public Mino
 {
-private:
-	bool isFix;
-	std::vector<Block> blocks;
-
 public:
-	ZMino(Point startPoint) : isFix(false), blocks(4)
+	ZMino(Point startPoint)
 	{
 		minoType = EMinoType::ZMino;
+		isFix = false;
+		blocks = vector<Block>(4);
+
 		Point p1 = Point(startPoint.x + 0, startPoint.y + 0);
 		Point p2 = Point(startPoint.x + 2, startPoint.y + 0);
 		Point p3 = Point(startPoint.x + 2, startPoint.y + 1);
 		Point p4 = Point(startPoint.x + 4, startPoint.y + 1);
 
-		blocks.push_back(Block(p1));
-		blocks.push_back(Block(p2));
-		blocks.push_back(Block(p3));
-		blocks.push_back(Block(p4));
+		blocks[0] = Block(p1);
+		blocks[1] = Block(p2);
+		blocks[2] = Block(p3);
+		blocks[3] = Block(p4);
 	}
 
 	const std::vector<Block>& GetBlocks() const override
@@ -307,17 +320,24 @@ int main()
 		vector<char> {' ', ' ', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', ' ', ' ' }
 	};
 
+	vector<Mino*> minos;
+
 	Mino* mino = GenerateMino(EMinoType::IMino, Point(4, 5));
-	DrawMino(grid, mino);
+	minos.push_back(mino);
 
-	// DrawMino(grid, Point(4, 1));
-	// DrawMino(grid, Point(9, 4));
-	// DrawMino(grid, Point(3, 9));
+	DrawMino(grid, minos[0]);
 
-	// Mino에 대한 배열을 만들고 이것들이 N초마다 아래로 내려가도록 해야 한다. (단 mino에도 상태가 있겠군)
+	auto startTime = std::chrono::high_resolution_clock::now();
+	double elapsedTime = 0.0;
+	double deltaTime = 0.0;
 
 	while (true)
 	{
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		deltaTime = std::chrono::duration<double, std::milli>(currentTime - startTime).count() / 1000.0;
+		startTime = currentTime;
+		elapsedTime += deltaTime;
+
 		for (int i = 0; i < ROW; i++)
 		{
 			for (int j = 0; j < COLUMN; j++)
@@ -328,7 +348,16 @@ int main()
 			cout << "\n";
 		}
 
+		if (elapsedTime > 1)
+		{
+			elapsedTime = 0;
+			minos[0]->Down();
+			DrawMino(grid, minos[0]);
+		}
+
 		cout << "\033[H";
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
 

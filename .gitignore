@@ -1,1 +1,5 @@
 ﻿.vs/Tetris/v17/Browse.VC.opendb
+*.db-wal
+*.suo
+*.db
+*.vsidx

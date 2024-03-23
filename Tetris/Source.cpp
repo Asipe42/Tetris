@@ -4,6 +4,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include <random>
 
 using namespace std;
 
@@ -78,7 +79,8 @@ enum class EMinoType
 	JMino,
 	LMino,
 	SMino,
-	ZMino
+	ZMino,
+	EOE
 };
 
 class Mino abstract
@@ -283,6 +285,8 @@ public:
 
 void ResetGrid(vector<vector<char>>& grid);
 
+EMinoType PickRandomMinoType();
+
 Mino* GenerateMino(EMinoType minoType, Point startPoint);
 
 void DrawMino(vector<vector<char>>& grid, const Mino* mino);
@@ -322,13 +326,16 @@ int main()
 		vector<char> {' ', ' ', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', ' ', ' ' }
 	};
 
+	//TODO 랜덤으로 하나 골라서 생성하기
+
 	vector<Mino*> minos;
 
-	Mino* mino = GenerateMino(EMinoType::IMino, Point(4, 5));
+	EMinoType ranMinoType = PickRandomMinoType();
+	Mino* mino = GenerateMino(ranMinoType, Point(4, 5));
 	minos.push_back(mino);
 
 	DrawMino(grid, minos[0]);
-
+	
 	auto startTime = std::chrono::high_resolution_clock::now();
 	double elapsedTime = 0.0;
 	double deltaTime = 0.0;
@@ -365,7 +372,6 @@ int main()
 	}
 }
 
-
 Mino* GenerateMino(EMinoType minoType, Point startPoint)
 {
 	switch (minoType)
@@ -395,7 +401,7 @@ Mino* GenerateMino(EMinoType minoType, Point startPoint)
 
 void ResetGrid(vector<vector<char>>& grid)
 {
-	// TODO 너무 비효율적인 건 아닐까?
+	//TODO 너무 비효율적인 건 아닐까?
 	grid = 
 	{
 		vector<char> { '<', '!', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '!', '>' },
@@ -421,6 +427,21 @@ void ResetGrid(vector<vector<char>>& grid)
 		vector<char> { '<', '!', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '!', '>' },
 		vector<char> {' ', ' ', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', '\\', '/', ' ', ' ' }
 	};
+}
+
+EMinoType PickRandomMinoType()
+{
+	// 난수 생성의 품질이 더 좋아야 한다면 다른 라이브러리로 대체하자
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	int start = (int)EMinoType::None + 1;
+	int end = (int)EMinoType::EOE - 1;
+
+	std::uniform_int_distribution<int> dis(start, end);
+	
+	int ranNum = dis(gen);
+	return (EMinoType)ranNum;
 }
 
 

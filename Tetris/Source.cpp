@@ -377,6 +377,9 @@ int main()
 	double deltaTime = 0.0;
 	char key;
 
+	bool isLeftPressed = false;
+	bool isRightPressed = false;
+
 	while (true)
 	{
 		auto currentTime = std::chrono::high_resolution_clock::now();
@@ -384,44 +387,57 @@ int main()
 		startTime = currentTime;
 		elapsedTime += deltaTime;
 
-		if (elapsedTime > 1)
-		{
-			elapsedTime = 0;
-
 #pragma region 입력
-			if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-			{
-				minos[0]->Left();
-			}
-			if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-			{
-				minos[0]->Right();
-			}
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			isLeftPressed = true;
+			isRightPressed = false;
+		}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			isLeftPressed = false;
+			isRightPressed = true;
+		}
 #pragma endregion
 
 #pragma region 계산
+		if (elapsedTime > 1)
+		{
+			elapsedTime = 0;
 			minos[0]->Down();
+		}
+
+		if (isLeftPressed)
+		{
+			isLeftPressed = false;
+			minos[0]->Left();
+		}
+
+		if (isRightPressed)
+		{
+			isRightPressed = false;
+			minos[0]->Right();
+		}
 #pragma endregion
 
 #pragma region 렌더링
-			ResetGrid(grid);
-			DrawMino(grid, minos[0]);
+		ResetGrid(grid);
+		DrawMino(grid, minos[0]);
 
-			for (int i = 0; i < ROW; i++)
+		for (int i = 0; i < ROW; i++)
+		{
+			for (int j = 0; j < COLUMN; j++)
 			{
-				for (int j = 0; j < COLUMN; j++)
-				{
-					cout << grid[i][j];
-				}
-
-				cout << "\n";
+				std::cout << grid[i][j];
 			}
-#pragma endregion
+
+			std::cout << "\n";
 		}
+#pragma endregion
 
-		cout << "\033[H";
+		std::cout << "\033[H";
 
-		// std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		std::this_thread::sleep_for(std::chrono::milliseconds(33));
 	}
 }
 

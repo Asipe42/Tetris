@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <random>
+#include <conio.h>
 
 using namespace std;
 
@@ -32,6 +33,16 @@ public:
 	void Down()
 	{
 		this->y = y + 1;
+	}
+
+	void Left()
+	{
+		this->x = x - 1;
+	}
+
+	void Right()
+	{
+		this->x = x + 1;
 	}
 };
 
@@ -68,6 +79,18 @@ public:
 		leftPoint.Down();
 		rightPoint.Down();
 	}
+
+	void Left()
+	{
+		leftPoint.Left();
+		rightPoint.Left();
+	}
+
+	void Right()
+	{
+		leftPoint.Right();
+		rightPoint.Right();
+	}
 };
 
 enum class EMinoType
@@ -92,11 +115,46 @@ protected:
 
 public:
 	virtual const std::vector<Block>& GetBlocks() const = 0;
-	virtual void Down()
+	virtual int GetLeftX() = 0;
+	virtual int GetRightX() = 0;
+	virtual bool IsBottom() = 0;
+
+	void Down()
 	{
+		if (IsBottom())
+		{
+			return;
+		}
+
 		for (auto& block : blocks)
 		{
 			block.Down();
+		}
+	}
+
+	void Left()
+	{
+		if (GetLeftX() - 1 < 2)
+		{
+			return;
+		}
+
+		for (auto& block : blocks)
+		{
+			block.Left();
+		}
+	}
+
+	void Right()
+	{
+		if (GetRightX() + 1 > ROW - 1)
+		{
+			return;
+		}
+
+		for (auto& block : blocks)
+		{
+			block.Right();
 		}
 	}
 };
@@ -125,6 +183,21 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[0].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class OMino : public Mino
@@ -150,6 +223,21 @@ public:
 	const std::vector<Block>& GetBlocks() const override
 	{
 		return blocks;
+	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[2].GetLeftPoint().y > COLUMN - 5;
 	}
 };
 
@@ -177,6 +265,21 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[2].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class JMino : public Mino
@@ -202,6 +305,21 @@ public:
 	const std::vector<Block>& GetBlocks() const override
 	{
 		return blocks;
+	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
 	}
 };
 
@@ -229,6 +347,21 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[2].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class SMino : public Mino
@@ -255,6 +388,21 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[2].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[1].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class ZMino : public Mino
@@ -280,6 +428,21 @@ public:
 	const std::vector<Block>& GetBlocks() const override
 	{
 		return blocks;
+	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
 	}
 };
 
@@ -327,14 +490,11 @@ int main()
 	};
 
 	//TODO 랜덤으로 하나 골라서 생성하기
-
 	vector<Mino*> minos;
 
 	EMinoType ranMinoType = PickRandomMinoType();
 	Mino* mino = GenerateMino(ranMinoType, Point(4, 5));
 	minos.push_back(mino);
-
-	DrawMino(grid, minos[0]);
 	
 	auto startTime = std::chrono::high_resolution_clock::now();
 	double elapsedTime = 0.0;
@@ -347,28 +507,49 @@ int main()
 		startTime = currentTime;
 		elapsedTime += deltaTime;
 
+#pragma region 입력
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			minos[0]->Left();
+
+		}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			minos[0]->Right();
+
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			minos[0]->Down();
+		}
+#pragma endregion
+
+#pragma region 계산
+		if (elapsedTime > 1)
+		{
+			elapsedTime = 0;
+		}
+
+#pragma endregion
+
+#pragma region 렌더링
+		ResetGrid(grid);
+		DrawMino(grid, minos[0]);
+
 		for (int i = 0; i < ROW; i++)
 		{
 			for (int j = 0; j < COLUMN; j++)
 			{
-				cout << grid[i][j];
+				std::cout << grid[i][j];
 			}
 
-			cout << "\n";
+			std::cout << "\n";
 		}
+#pragma endregion
 
-		if (elapsedTime > 1)
-		{
-			ResetGrid(grid);
+		std::cout << "\033[H";
 
-			elapsedTime = 0;
-			minos[0]->Down();
-			DrawMino(grid, minos[0]);
-		}
-
-		cout << "\033[H";
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		std::this_thread::sleep_for(std::chrono::milliseconds(33));
 	}
 }
 
@@ -401,7 +582,7 @@ Mino* GenerateMino(EMinoType minoType, Point startPoint)
 
 void ResetGrid(vector<vector<char>>& grid)
 {
-	//TODO 너무 비효율적인 건 아닐까?
+	//TODO 다시 그리는 게 아니라 데이터를 수정하는 방식으로 변경하자
 	grid = 
 	{
 		vector<char> { '<', '!', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '!', '>' },
@@ -444,7 +625,7 @@ EMinoType PickRandomMinoType()
 	return (EMinoType)ranNum;
 }
 
-
+// TODO 이름이 올바르지 않음
 void DrawMino(vector<vector<char>>& grid, const Mino* mino)
 {
 	const vector<Block>& blocks = mino->GetBlocks();

@@ -33,6 +33,16 @@ public:
 	{
 		this->y = y + 1;
 	}
+
+	void Left()
+	{
+		this->x = x - 1;
+	}
+
+	void Right()
+	{
+		this->x = x + 1;
+	}
 };
 
 struct Block
@@ -68,6 +78,18 @@ public:
 		leftPoint.Down();
 		rightPoint.Down();
 	}
+
+	void Left()
+	{
+		leftPoint.Left();
+		rightPoint.Left();
+	}
+
+	void Right()
+	{
+		leftPoint.Right();
+		rightPoint.Right();
+	}
 };
 
 enum class EMinoType
@@ -92,11 +114,27 @@ protected:
 
 public:
 	virtual const std::vector<Block>& GetBlocks() const = 0;
-	virtual void Down()
+	void Down()
 	{
 		for (auto& block : blocks)
 		{
 			block.Down();
+		}
+	}
+
+	void Left()
+	{
+		for (auto& block : blocks)
+		{
+			block.Left();
+		}
+	}
+
+	void Right()
+	{
+		for (auto& block : blocks)
+		{
+			block.Right();
 		}
 	}
 };
@@ -333,8 +371,6 @@ int main()
 	EMinoType ranMinoType = PickRandomMinoType();
 	Mino* mino = GenerateMino(ranMinoType, Point(4, 5));
 	minos.push_back(mino);
-
-	DrawMino(grid, minos[0]);
 	
 	auto startTime = std::chrono::high_resolution_clock::now();
 	double elapsedTime = 0.0;
@@ -358,23 +394,20 @@ int main()
 		}
 
 #pragma region 입력
-		if (GetAsyncKeyState(VK_UP) & 0x8000)
-		{
-			std::cout << "전진" << std::endl;
-		}
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000) 
 		{
-			std::cout << "좌회전" << std::endl;
+			minos[0]->Left();
 		}
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) 
 		{
-			std::cout << "우회전" << std::endl;
+			minos[0]->Right();
 		}
 #pragma endregion
 
 		if (elapsedTime > 1)
 		{
 			ResetGrid(grid);
+
 
 			elapsedTime = 0;
 			minos[0]->Down();

@@ -115,6 +115,9 @@ protected:
 
 public:
 	virtual const std::vector<Block>& GetBlocks() const = 0;
+	virtual int GetLeftX() = 0;
+	virtual int GetRightX() = 0;
+
 	void Down()
 	{
 		for (auto& block : blocks)
@@ -125,6 +128,11 @@ public:
 
 	void Left()
 	{
+		if (GetLeftX() - 1 < 2)
+		{
+			return;
+		}
+
 		for (auto& block : blocks)
 		{
 			block.Left();
@@ -133,6 +141,11 @@ public:
 
 	void Right()
 	{
+		if (GetRightX() + 1 > ROW - 1)
+		{
+			return;
+		}
+
 		for (auto& block : blocks)
 		{
 			block.Right();
@@ -164,6 +177,16 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
+	}
 };
 
 class OMino : public Mino
@@ -189,6 +212,16 @@ public:
 	const std::vector<Block>& GetBlocks() const override
 	{
 		return blocks;
+	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
 	}
 };
 
@@ -216,6 +249,16 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[2].GetRightPoint().x;
+	}
 };
 
 class JMino : public Mino
@@ -241,6 +284,16 @@ public:
 	const std::vector<Block>& GetBlocks() const override
 	{
 		return blocks;
+	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
 	}
 };
 
@@ -268,6 +321,16 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[2].GetRightPoint().x;
+	}
 };
 
 class SMino : public Mino
@@ -294,6 +357,16 @@ public:
 	{
 		return blocks;
 	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[1].GetRightPoint().x;
+	}
 };
 
 class ZMino : public Mino
@@ -319,6 +392,16 @@ public:
 	const std::vector<Block>& GetBlocks() const override
 	{
 		return blocks;
+	}
+
+	int GetLeftX() override
+	{
+		return blocks[0].GetLeftPoint().x;
+	}
+
+	int GetRightX() override
+	{
+		return blocks[3].GetRightPoint().x;
 	}
 };
 

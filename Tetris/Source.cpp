@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <random>
+#include <conio.h>
 
 using namespace std;
 
@@ -365,7 +366,6 @@ int main()
 	};
 
 	//TODO 랜덤으로 하나 골라서 생성하기
-
 	vector<Mino*> minos;
 
 	EMinoType ranMinoType = PickRandomMinoType();
@@ -375,6 +375,7 @@ int main()
 	auto startTime = std::chrono::high_resolution_clock::now();
 	double elapsedTime = 0.0;
 	double deltaTime = 0.0;
+	char key;
 
 	while (true)
 	{
@@ -383,40 +384,44 @@ int main()
 		startTime = currentTime;
 		elapsedTime += deltaTime;
 
-		for (int i = 0; i < ROW; i++)
-		{
-			for (int j = 0; j < COLUMN; j++)
-			{
-				cout << grid[i][j];
-			}
-
-			cout << "\n";
-		}
-
-#pragma region 입력
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000) 
-		{
-			minos[0]->Left();
-		}
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) 
-		{
-			minos[0]->Right();
-		}
-#pragma endregion
-
 		if (elapsedTime > 1)
 		{
-			ResetGrid(grid);
-
-
 			elapsedTime = 0;
+
+#pragma region 입력
+			if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+			{
+				minos[0]->Left();
+			}
+			if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+			{
+				minos[0]->Right();
+			}
+#pragma endregion
+
+#pragma region 계산
 			minos[0]->Down();
+#pragma endregion
+
+#pragma region 렌더링
+			ResetGrid(grid);
 			DrawMino(grid, minos[0]);
+
+			for (int i = 0; i < ROW; i++)
+			{
+				for (int j = 0; j < COLUMN; j++)
+				{
+					cout << grid[i][j];
+				}
+
+				cout << "\n";
+			}
+#pragma endregion
 		}
 
 		cout << "\033[H";
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		// std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
 
@@ -492,7 +497,7 @@ EMinoType PickRandomMinoType()
 	return (EMinoType)ranNum;
 }
 
-
+// TODO 이름이 올바르지 않음
 void DrawMino(vector<vector<char>>& grid, const Mino* mino)
 {
 	const vector<Block>& blocks = mino->GetBlocks();

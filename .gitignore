@@ -3,3 +3,10 @@
 *.suo
 *.db
 *.vsidx
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.obj
+*.tlog
+*.db-shm

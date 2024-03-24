@@ -357,6 +357,21 @@ int main()
 			cout << "\n";
 		}
 
+#pragma region 입력
+		if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			std::cout << "전진" << std::endl;
+		}
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000) 
+		{
+			std::cout << "좌회전" << std::endl;
+		}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) 
+		{
+			std::cout << "우회전" << std::endl;
+		}
+#pragma endregion
+
 		if (elapsedTime > 1)
 		{
 			ResetGrid(grid);

@@ -391,7 +391,7 @@ public:
 
 	int GetLeftX() override
 	{
-		return blocks[0].GetLeftPoint().x;
+		return blocks[2].GetLeftPoint().x;
 	}
 
 	int GetRightX() override
@@ -499,10 +499,6 @@ int main()
 	auto startTime = std::chrono::high_resolution_clock::now();
 	double elapsedTime = 0.0;
 	double deltaTime = 0.0;
-	char key;
-
-	bool isLeftPressed = false;
-	bool isRightPressed = false;
 
 	while (true)
 	{
@@ -514,13 +510,17 @@ int main()
 #pragma region ÀÔ·Â
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		{
-			isLeftPressed = true;
-			isRightPressed = false;
+			minos[0]->Left();
+
 		}
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 		{
-			isLeftPressed = false;
-			isRightPressed = true;
+			minos[0]->Right();
+
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			minos[0]->Down();
 		}
 #pragma endregion
 
@@ -528,20 +528,8 @@ int main()
 		if (elapsedTime > 1)
 		{
 			elapsedTime = 0;
-			minos[0]->Down();
 		}
 
-		if (isLeftPressed)
-		{
-			isLeftPressed = false;
-			minos[0]->Left();
-		}
-
-		if (isRightPressed)
-		{
-			isRightPressed = false;
-			minos[0]->Right();
-		}
 #pragma endregion
 
 #pragma region ·»´õ¸µ

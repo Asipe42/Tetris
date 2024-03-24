@@ -117,9 +117,15 @@ public:
 	virtual const std::vector<Block>& GetBlocks() const = 0;
 	virtual int GetLeftX() = 0;
 	virtual int GetRightX() = 0;
+	virtual bool IsBottom() = 0;
 
 	void Down()
 	{
+		if (IsBottom())
+		{
+			return;
+		}
+
 		for (auto& block : blocks)
 		{
 			block.Down();
@@ -187,6 +193,11 @@ public:
 	{
 		return blocks[3].GetRightPoint().x;
 	}
+
+	bool IsBottom() override
+	{
+		return blocks[0].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class OMino : public Mino
@@ -222,6 +233,11 @@ public:
 	int GetRightX() override
 	{
 		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[2].GetLeftPoint().y > COLUMN - 5;
 	}
 };
 
@@ -259,6 +275,11 @@ public:
 	{
 		return blocks[2].GetRightPoint().x;
 	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class JMino : public Mino
@@ -294,6 +315,11 @@ public:
 	int GetRightX() override
 	{
 		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
 	}
 };
 
@@ -331,6 +357,11 @@ public:
 	{
 		return blocks[2].GetRightPoint().x;
 	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class SMino : public Mino
@@ -367,6 +398,11 @@ public:
 	{
 		return blocks[1].GetRightPoint().x;
 	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
+	}
 };
 
 class ZMino : public Mino
@@ -402,6 +438,11 @@ public:
 	int GetRightX() override
 	{
 		return blocks[3].GetRightPoint().x;
+	}
+
+	bool IsBottom() override
+	{
+		return blocks[3].GetLeftPoint().y > COLUMN - 5;
 	}
 };
 
@@ -553,7 +594,7 @@ Mino* GenerateMino(EMinoType minoType, Point startPoint)
 
 void ResetGrid(vector<vector<char>>& grid)
 {
-	//TODO 너무 비효율적인 건 아닐까?
+	//TODO 다시 그리는 게 아니라 데이터를 수정하는 방식으로 변경하자
 	grid = 
 	{
 		vector<char> { '<', '!', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', ' ', '.', '!', '>' },
